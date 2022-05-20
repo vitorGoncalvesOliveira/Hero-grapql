@@ -1,3 +1,5 @@
+/* eslint-disable dot-notation */
+/* eslint-disable no-self-compare */
 /* eslint-disable import/no-unresolved */
 /* eslint-disable import/extensions */
 import api from '../api/api';
@@ -8,9 +10,16 @@ export default class HeroService {
   // eslint-disable-next-line no-unused-vars
   static async findALl({ limit, order }: filterListHeroes) {
     const response = await api.get('/all.json');
-    let heroes = response.data;
+    let heroes: Hero[] = response.data;
     if (limit) {
       heroes = heroes.slice(0, limit);
+    }
+    if (order) {
+      heroes.sort((a, b) => {
+        if (a[order] > b[order]) { return 1; }
+        if (a[order] < b[order]) { return -1; }
+        return 0;
+      });
     }
 
     return heroes;

@@ -4,7 +4,7 @@
 /* eslint-disable import/extensions */
 /* eslint-disable import/prefer-default-export */
 import HeroService from '../services/hero';
-
+import { Hero } from '../model/hero'; 
 export const resolvers = {
   Query: {
     listHeroes: (_:any, {limit, order}:filterListHeroes) => HeroService.findALl({limit, order}),
@@ -13,8 +13,8 @@ export const resolvers = {
 };
 
 export interface filterListHeroes {
-  limit: Number;
-  order: String;
+  limit: number;
+  order: keyof Hero;
 }
 
 export interface search {

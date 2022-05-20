@@ -7,44 +7,44 @@ interface Powerstats {
     combat: number
 }
 interface Appearance {
-    gender: String
-    race: String
-    height: [String]
-    weight: [String]
-    eyeColor: String
-    hairColor: String
+    gender: string
+    race: string
+    height: [string]
+    weight: [string]
+    eyeColor: string
+    hairColor: string
 }
 interface Biography {
-    fullName: String
-    alterEgos: String
-    aliases: [String]
-    placeOfBirth: String
-    firstAppearance: String
-    publisher: String
-    alignment: String
+    fullName: string
+    alterEgos: string
+    aliases: [string]
+    placeOfBirth: string
+    firstAppearance: string
+    publisher: string
+    alignment: string
 }
 
 interface Work {
-    occupation:String
-    base: String
+    occupation:string
+    base: string
 }
 
 interface Connections {
-    groupAffiliation: String
-    relatives: String
+    groupAffiliation: string
+    relatives: string
 }
 
 interface Images {
-    xs: String
-    sm: String
-    md: String
-    lg: String
+    xs: string
+    sm: string
+    md: string
+    lg: string
 }
 
 export interface Hero {
     id: number
-    name: String
-    slug: String
+    name: string
+    slug: string
     powerstats: Powerstats
     appearance:Appearance
     biography: Biography
