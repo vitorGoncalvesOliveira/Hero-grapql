@@ -58,6 +58,7 @@ type Images {
     lg: String
 }
 
+
 type Query {
     listHeroes(limit: Int, order: String): [Hero]
     searchHeroes(query: String, filter:String) : [Hero]

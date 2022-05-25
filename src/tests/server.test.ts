@@ -33,12 +33,23 @@ describe('Graphql', () => {
       expect(result.data?.listHeroes.length).toBe(1);
     });
 
-    it('should order hero by slug', async () => {
+    it('should order hero by intelligence', async () => {
       const result = await server.executeOperation({
-        query: 'query { listHeroes(limit : 4, order: "slug") { id, name, slug} }',
+        query: 'query { listHeroes(limit : 4, order: "intelligence") { id, name, slug, powerstats { intelligence } } }',
       });
 
-      expect(result.data?.listHeroes[0].name).toBe('Abe Sapien');
+      expect(result.data?.listHeroes[0].name).toBe('A-Bomb');
+      expect(result.data?.listHeroes[0].powerstats.intelligence).toBe(38);
+    });
+  });
+
+  describe('Search Heros', () => {
+    it('should return Hero by filter name', async () => {
+      const result = await server.executeOperation({
+        query: 'query { searchHeroes(query :"Abraxas", filter:"name") { id, name, slug }}',
+      });
+
+      expect(result.data?.searchHeroes[0].name).toBe('Abraxas');
     });
   });
 });

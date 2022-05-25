@@ -1,3 +1,6 @@
+/* eslint-disable no-restricted-syntax */
+/* eslint-disable no-console */
+/* eslint-disable guard-for-in */
 /* eslint-disable dot-notation */
 /* eslint-disable no-self-compare */
 /* eslint-disable import/no-unresolved */
@@ -6,6 +9,7 @@ import api from '../api/api';
 import { filterListHeroes, search } from '../resolvers/hero';
 import { Hero } from '../model/hero';
 
+const objectKeys: string[] = [];
 export default class HeroService {
   // eslint-disable-next-line no-unused-vars
   static async findALl({ limit, order }: filterListHeroes) {
@@ -15,11 +19,19 @@ export default class HeroService {
       heroes = heroes.slice(0, limit);
     }
     if (order) {
-      heroes.sort((a, b) => {
-        if (a[order] > b[order]) { return 1; }
-        if (a[order] < b[order]) { return -1; }
-        return 0;
-      });
+      const temp:Hero = heroes[0];
+
+      const keys = HeroService.getObjectKeys(temp);
+      const key = keys.find((k) => k.includes(order));
+      if (key) {
+        heroes.sort((a:any, b:any) => {
+          const elementA = key.split('.').reduce((prev, curr) => prev && prev[curr], a);
+          const elementB = key.split('.').reduce((prev, curr) => prev && prev[curr], b);
+          if (elementA > elementB) { return 1; }
+          if (elementA < elementB) { return -1; }
+          return 0;
+        });
+      }
     }
 
     return heroes;
@@ -28,7 +40,28 @@ export default class HeroService {
   static async searchHeroes({ filter, query }: search) {
     const response = await api.get('/all.json');
     const heroes = response.data;
+    let hero: Hero[] = [];
+    if (filter) {
+      hero = heroes.filter((her:any) => her[filter] === query);
+    }
 
-    return heroes;
+    return hero || 'null';
+  }
+
+  static getObjectKeys(obj: { [x: string]: any; }, previousPath = '') {
+    // Step 1- Go through all the keys of the object
+    Object.keys(obj).forEach((key) => {
+      // Get the current path and concat the previous path if necessary
+      const currentPath = previousPath ? `${previousPath}.${key}` : key;
+      // Step 2- If the value is a string, then add it to the keys array
+      if (typeof obj[key] !== 'object') {
+        objectKeys.push(currentPath);
+      } else {
+        objectKeys.push(currentPath);
+        // Step 3- If the value is an object, then recursively call the function
+        HeroService.getObjectKeys(obj[key], currentPath);
+      }
+    });
+    return objectKeys;
   }
 }

@@ -14,10 +14,10 @@ export const resolvers = {
 
 export interface filterListHeroes {
   limit: number;
-  order: keyof Hero;
+  order: string;
 }
 
 export interface search {
-  query: String;
-  filter: String;
+  query: string;
+  filter: 'name'| 'appearance' | 'biography' | 'work'| 'connections';
 }
