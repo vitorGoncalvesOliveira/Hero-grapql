@@ -44,12 +44,28 @@ describe('Graphql', () => {
   });
 
   describe('Search Heros', () => {
-    it('should return Hero by filter name', async () => {
+    it('should return Hero filter by name', async () => {
       const result = await server.executeOperation({
         query: 'query { searchHeroes(query :"Abraxas", filter:"name") { id, name, slug }}',
       });
 
       expect(result.data?.searchHeroes[0].name).toBe('Abraxas');
+    });
+
+    it('should return Hero filter by appearance', async () => {
+      const result = await server.executeOperation({
+        query: 'query { searchHeroes(query :"Ungaran", filter:"appearance") { id, name, slug }}',
+      });
+
+      expect(result.data?.searchHeroes[0].name).toBe('Abin Sur');
+    });
+
+    it('should return Hero with query equals Mobile', async () => {
+      const result = await server.executeOperation({
+        query: 'query { searchHeroes(query :"Mobile") { id, name, slug }}',
+      });
+
+      expect(result.data?.searchHeroes[0].name).toBe('Abomination');
     });
   });
 });

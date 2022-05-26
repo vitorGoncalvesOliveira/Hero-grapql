@@ -41,8 +41,28 @@ export default class HeroService {
     const response = await api.get('/all.json');
     const heroes = response.data;
     let hero: Hero[] = [];
+    const temp = heroes[0];
+    const keys = Object.keys(temp);
     if (filter) {
-      hero = heroes.filter((her:any) => her[filter] === query);
+      if (keys.includes(filter)) {
+        const keyType = typeof temp[filter];
+        if (keyType === 'object') {
+          hero = heroes.filter((her:any) => Object.values(her[filter]).includes(query));
+        } else {
+          hero = heroes.filter((her:any) => her[filter] === query);
+        }
+      }
+    } else {
+      hero = heroes.filter((her:any) => {
+        const properties = Object.values(her);
+        const realKey = properties.map((e:any) => {
+          if (typeof e === 'object') {
+            return [...Object.values(e)];
+          }
+          return e;
+        }).flat();
+        return realKey.includes(query);
+      });
     }
 
     return hero || 'null';
