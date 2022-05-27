@@ -58,9 +58,66 @@ type Images {
     lg: String
 }
 
+input NewPowerstats {
+    intelligence: Int
+    strength: Int
+    speed: Int
+    durability: Int
+    power: Int
+    combat: Int
+}
+input NewAppearance {
+    gender: String
+    race: String
+    height: [String]
+    weight: [String]
+    eyeColor: String
+    hairColor: String
+}
+input NewBiography {
+    fullName: String
+    alterEgos: String
+    aliases: [String]
+    placeOfBirth: String
+    firstAppearance: String
+    publisher: String
+    alignment: String    
+}
+
+input NewWork {
+    occupation:String
+    base: String
+}
+
+input NewConnections {
+    groupAffiliation: String
+    relatives: String
+}
+
+input NewImages {
+    xs: String
+    sm: String
+    md: String
+    lg: String
+}
+
+
+input NewHero {    
+    name: String
+    slug: String 
+    powerstats: NewPowerstats
+    appearance: NewAppearance
+    biography: NewBiography
+    work: NewWork
+    connections: NewConnections
+    images: NewImages
+}
 
 type Query {
     listHeroes(limit: Int, order: String): [Hero]
-    searchHeroes(query: String, filter:String) : [Hero]
+    searchHeroes(query: String! , filter:String) : [Hero]
+}
+type Mutation {
+    addHeroes(hero: NewHero): Hero
 }
 `;

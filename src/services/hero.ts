@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable no-console */
 /* eslint-disable guard-for-in */
@@ -8,25 +9,32 @@
 import api from '../api/api';
 import { filterListHeroes, search } from '../resolvers/hero';
 import { Hero } from '../model/hero';
+import cacheHero from '../config/cache';
+import Util from '../util/util';
 
-const objectKeys: string[] = [];
 export default class HeroService {
   // eslint-disable-next-line no-unused-vars
   static async findALl({ limit, order }: filterListHeroes) {
-    const response = await api.get('/all.json');
-    let heroes: Hero[] = response.data;
+    let heroes: Hero[];
+    if (cacheHero.length) {
+      heroes = cacheHero;
+    } else {
+      const response = await api.get('/all.json');
+      heroes = response.data;
+      cacheHero.push(...heroes);
+    }
     if (limit) {
       heroes = heroes.slice(0, limit);
     }
     if (order) {
       const temp:Hero = heroes[0];
 
-      const keys = HeroService.getObjectKeys(temp);
-      const key = keys.find((k) => k.includes(order));
+      const keys = Util.getObjectKeys(temp, '', []);
+      const key = keys.find((k:any) => k.includes(order));
       if (key) {
         heroes.sort((a:any, b:any) => {
-          const elementA = key.split('.').reduce((prev, curr) => prev && prev[curr], a);
-          const elementB = key.split('.').reduce((prev, curr) => prev && prev[curr], b);
+          const elementA = key.split('.').reduce((prev:any, curr:any) => prev && prev[curr], a);
+          const elementB = key.split('.').reduce((prev:any, curr:any) => prev && prev[curr], b);
           if (elementA > elementB) { return 1; }
           if (elementA < elementB) { return -1; }
           return 0;
@@ -38,11 +46,18 @@ export default class HeroService {
   }
 
   static async searchHeroes({ filter, query }: search) {
-    const response = await api.get('/all.json');
-    const heroes = response.data;
+    let heroes: Hero[];
+    if (cacheHero.length) {
+      heroes = cacheHero;
+    } else {
+      const response = await api.get('/all.json');
+      heroes = response.data;
+    }
+
     let hero: Hero[] = [];
     const temp = heroes[0];
     const keys = Object.keys(temp);
+
     if (filter) {
       if (keys.includes(filter)) {
         const keyType = typeof temp[filter];
@@ -54,34 +69,21 @@ export default class HeroService {
       }
     } else {
       hero = heroes.filter((her:any) => {
-        const properties = Object.values(her);
-        const realKey = properties.map((e:any) => {
-          if (typeof e === 'object') {
-            return [...Object.values(e)];
-          }
-          return e;
-        }).flat();
-        return realKey.includes(query);
+        const heroesValue = Util.getObjectValuesInArray(her);
+        return heroesValue.includes(query);
       });
     }
 
     return hero || 'null';
   }
 
-  static getObjectKeys(obj: { [x: string]: any; }, previousPath = '') {
-    // Step 1- Go through all the keys of the object
-    Object.keys(obj).forEach((key) => {
-      // Get the current path and concat the previous path if necessary
-      const currentPath = previousPath ? `${previousPath}.${key}` : key;
-      // Step 2- If the value is a string, then add it to the keys array
-      if (typeof obj[key] !== 'object') {
-        objectKeys.push(currentPath);
-      } else {
-        objectKeys.push(currentPath);
-        // Step 3- If the value is an object, then recursively call the function
-        HeroService.getObjectKeys(obj[key], currentPath);
-      }
-    });
-    return objectKeys;
+  static async addHeros(hero : any) {
+    if (cacheHero.length) {
+      hero.hero.id = cacheHero.length + 1;
+      cacheHero.push(hero.hero);
+      return hero.hero;
+    }
+
+    throw new Error('No cached to add Hero');
   }
 }

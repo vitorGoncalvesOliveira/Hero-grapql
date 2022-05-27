@@ -10,6 +10,9 @@ export const resolvers = {
     listHeroes: (_:any, {limit, order}:filterListHeroes) => HeroService.findALl({limit, order}),
     searchHeroes: (_:any, args: search) => HeroService.searchHeroes(args)
   },
+  Mutation:{
+    addHeroes:(_:any, args:Hero) => HeroService.addHeros(args)
+  }
 };
 
 export interface filterListHeroes {

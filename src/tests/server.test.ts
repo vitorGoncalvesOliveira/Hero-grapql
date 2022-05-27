@@ -68,4 +68,20 @@ describe('Graphql', () => {
       expect(result.data?.searchHeroes[0].name).toBe('Abomination');
     });
   });
+
+  describe('cache heroes', () => {
+    it('Should call api only once', async () => {
+      const result = {
+        data: heroesMock,
+      };
+      const spy = jest.spyOn(Api, 'get').mockImplementation(async () => result);
+      await server.executeOperation({
+        query: 'query { listHeroes { id, name} }',
+      });
+      await server.executeOperation({
+        query: 'query { listHeroes { id, name} }',
+      });
+      expect(spy).toHaveBeenCalledTimes(1);
+    });
+  });
 });
