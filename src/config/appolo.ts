@@ -4,8 +4,12 @@
 import { ApolloServer } from 'apollo-server';
 import { resolvers } from '../resolvers/hero';
 import { typeDefs } from '../schema/Heroes';
+import HeroApi from '../api/hero-api';
 
 export default new ApolloServer({
   typeDefs,
   resolvers,
+  dataSources: () => ({
+    heroApi: new HeroApi(),
+  }),
 });

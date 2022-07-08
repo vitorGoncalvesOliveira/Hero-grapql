@@ -1,18 +1,16 @@
 /* eslint-disable import/extensions */
 /* eslint-disable import/no-unresolved */
 /* eslint-disable no-undef */
+import { RESTDataSource } from 'apollo-datasource-rest';
 import Appolo from '../config/appolo';
-import Api from '../api/api';
 import heroesMock from './mock/heroesMock';
+import cacheHero from '../config/cache';
 
 const server = Appolo;
 
 describe('Graphql', () => {
   beforeAll(() => {
-    const result = {
-      data: heroesMock,
-    };
-    jest.spyOn(Api, 'get').mockImplementation(async () => result);
+    jest.spyOn(RESTDataSource.prototype as any, 'get').mockImplementation(async () => heroesMock);
   });
 
   describe('List Heroes ', () => {
@@ -68,13 +66,10 @@ describe('Graphql', () => {
       expect(result.data?.searchHeroes[0].name).toBe('Abomination');
     });
   });
-
   describe('cache heroes', () => {
     it('Should call api only once', async () => {
-      const result = {
-        data: heroesMock,
-      };
-      const spy = jest.spyOn(Api, 'get').mockImplementation(async () => result);
+      cacheHero.length = 0;
+      const spy = jest.spyOn(RESTDataSource.prototype as any, 'get').mockImplementation(async () => heroesMock);
       await server.executeOperation({
         query: 'query { listHeroes { id, name} }',
       });

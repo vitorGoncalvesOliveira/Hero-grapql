@@ -3,15 +3,14 @@
 /* eslint-disable import/no-unresolved */
 /* eslint-disable import/extensions */
 /* eslint-disable import/prefer-default-export */
-import HeroService from '../services/hero';
 import { Hero } from '../model/hero'; 
 export const resolvers = {
   Query: {
-    listHeroes: (_:any, {limit, order}:filterListHeroes) => HeroService.findALl({limit, order}),
-    searchHeroes: (_:any, args: search) => HeroService.searchHeroes(args)
+    listHeroes: ( root:any, {limit, order}:filterListHeroes,{ dataSources }:any) => dataSources.heroApi.findALl({limit, order}),
+    searchHeroes: ( root:any, args: search, {dataSources }:any) => dataSources.heroApi.searchHeroes(args)
   },
   Mutation:{
-    addHeroes:(_:any, args:Hero) => HeroService.addHeros(args)
+    addHeroes:( root:any, args:Hero, { dataSources}:any) => dataSources.heroApi.addHeros(args)
   }
 };
 
